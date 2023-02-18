@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 
 function About({navigation}: {navigation: any}): JSX.Element {
   return (

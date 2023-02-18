@@ -1,5 +1,14 @@
-import React, { useState } from 'react';
-import { View, TextInput, Text, StyleSheet, TouchableOpacity } from "react-native";
+import React, {useState} from 'react';
+import {
+  View,
+  TextInput,
+  Text,
+  StyleSheet,
+  Switch,
+  TouchableOpacity,
+} from 'react-native';
+import {createUser} from '../api/users';
+import Snackbar from 'react-native-snackbar';
 
 const SignUpForm = ({navigation}: {navigation: any}) => {
   const [firstName, setFirstName] = useState('');
@@ -7,6 +16,7 @@ const SignUpForm = ({navigation}: {navigation: any}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const [error, setError] = useState('');
 
   const handleSignUp = () => {
@@ -35,8 +45,36 @@ const SignUpForm = ({navigation}: {navigation: any}) => {
       return;
     }
 
+    if (!acceptTerms) {
+      setError('Please accept the terms and conditions.');
+      return;
+    }
+
     setError('');
-    // TODO: Submit form to backend
+
+    createUser({
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      password,
+      password_confirmation: confirmPassword,
+      accept_terms: acceptTerms,
+    }).then(response => {
+      if (response.errors) {
+        Object.keys(response.errors).forEach(key => {
+          Snackbar.show({
+            text: `${key} ${response.errors[key]}`,
+            duration: Snackbar.LENGTH_SHORT,
+          });
+        });
+      } else {
+        Snackbar.show({
+          text: 'Account created successfully.',
+          duration: Snackbar.LENGTH_LONG,
+        });
+        navigation.navigate('Login');
+      }
+    });
   };
 
   return (
@@ -55,8 +93,9 @@ const SignUpForm = ({navigation}: {navigation: any}) => {
       />
       <TextInput
         style={styles.input}
-        value={email}
+        defaultValue={email}
         onChangeText={setEmail}
+        autoCapitalize="none"
         placeholder="Email"
       />
       <TextInput
@@ -74,6 +113,10 @@ const SignUpForm = ({navigation}: {navigation: any}) => {
         secureTextEntry
       />
       {error && <Text style={styles.error}>{error}</Text>}
+      <View style={styles.switchContainer}>
+        <Switch value={acceptTerms} onValueChange={setAcceptTerms} />
+        <Text>&nbsp;Accept Terms and Conditions</Text>
+      </View>
 
       <TouchableOpacity style={styles.button} onPress={handleSignUp}>
         <Text style={styles.buttonText}>Registration</Text>
@@ -95,7 +138,15 @@ const SignUpForm = ({navigation}: {navigation: any}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 20
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  switchLabel: {
+    marginRight: 10,
   },
   input: {
     height: 40,

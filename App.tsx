@@ -15,16 +15,19 @@ import SignUpForm from './components/SignUp';
 
 const Stack = createStackNavigator();
 
-function App(): JSX.Element {
+const App: React.FC = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="About" component={About} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="SignUp" component={SignUpForm} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="About" component={About} />
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="SignUp" component={SignUpForm} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
   );
-}
+};
+
 export default App;
